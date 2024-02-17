@@ -9,13 +9,14 @@ Once you have pulled the repo, there are four steps required to follow our metho
 3. Generate selected subsets from the model trained in step above.
 4. Train final model on the selected subsets.
 
-*Below, we give an example where we use the Llama-2 7B model to select data from the Alpaca dataset for Llama-2 13B.*
-
-*If you would like to generate the exact subsets used in our paper from our trainings, go to step 3 below.*
+*Below, we give an example where we use the Llama-2 7B model to select data from the Alpaca dataset for Llama-2 13B. If you would like to generate the exact subsets used in our paper from our training runs, go to step 3 below.*
 
 ### 1. Clustering
 ```
-OPENBLAS_NUM_THREADS=1 CUDA_VISIBLE_DEVICES=... python clustering.py --dataset data/alpaca_data.json --num_clusters 1000 --output_name "alpaca"
+OPENBLAS_NUM_THREADS=1 CUDA_VISIBLE_DEVICES=... python clustering.py \\
+    --dataset data/alpaca_data.json \
+    --num_clusters 1000 \
+    --output_name "alpaca" \
 ```
 Generates `./clustering/{output_name}.pkl` which contains clustered dataset.
 
