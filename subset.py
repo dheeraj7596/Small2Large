@@ -1,7 +1,5 @@
-import csv
 import utils
 import json
-import pickle
 import pandas as pd
 import numpy as np
 import random
@@ -21,11 +19,6 @@ required.add_argument(
 required.add_argument(
     "--l1_ranking_file",
     help="The perplexity csv file to generate subsets from.",
-    required=True,
-)
-required.add_argument(
-    "--model_name",
-    help="Model name that was set with process_pickle.py. Should be 'model' if wasn't specified.",
     required=True,
 )
 optional.add_argument(
@@ -50,9 +43,10 @@ args = parser.parse_args()
 
 random.seed(42)
 list_data_dict = utils.jload(args.dataset)
-MODEL_NAME = args.model_name
 df = pd.read_csv(args.l1_ranking_file)
 df.dropna(how="all", axis=1, inplace=True)
+
+MODEL_NAME = df.columns[-1][:-3]
 
 # Calculate proxy
 df[f"{MODEL_NAME}_Proxy"] = (df[f"{MODEL_NAME}_P0"]-df[f"{MODEL_NAME}_P1"])/(df[f"{MODEL_NAME}_P0"])
@@ -94,8 +88,8 @@ if (not args.lp1 and not args.lp1_approx and not args.clust_rand):
     print("Please choose at least 1 metric to generate subsets for!")
     exit()
 
-for cluster in range(df["labels_1000"].max()+1):
-    filter_clust = df[df["labels_1000"] == cluster]
+for cluster in range(df["cluster_num"].max()+1):
+    filter_clust = df[df["cluster_num"] == cluster]
     sort_L1 = filter_clust.sort_values(by=[f"{MODEL_NAME}_L1"]).reset_index(drop=True)
     sort_proxy = filter_clust.sort_values(by=[f"{MODEL_NAME}_Proxy"]).reset_index(drop=True)
     indexes_L1 = sort_L1["index"].tolist()
@@ -131,51 +125,73 @@ for cluster in range(df["labels_1000"].max()+1):
 
 if (args.lp1):
     with open(f"./data/33_low_lp1-{MODEL_NAME}.json", "w") as outfile:
+        print(f"Generated ./data/33_low_lp1-{MODEL_NAME}.json")
         outfile.write(indexes_to_dataset(low_l1_33))
     with open(f"./data/33_mid_lp1-{MODEL_NAME}.json", "w") as outfile:
+        print(f"Generated ./data/33_mid_lp1-{MODEL_NAME}.json")
         outfile.write(indexes_to_dataset(mid_l1_33))
     with open(f"./data/33_high_lp1-{MODEL_NAME}.json", "w") as outfile:
+        print(f"Generated ./data/33_high_lp1-{MODEL_NAME}.json")
         outfile.write(indexes_to_dataset(high_l1_33))
     with open(f"./data/25_low_lp1-{MODEL_NAME}.json", "w") as outfile:
+        print(f"Generated ./data/25_low_lp1-{MODEL_NAME}.json")
         outfile.write(indexes_to_dataset(low_l1_25))
     with open(f"./data/10_low_lp1-{MODEL_NAME}.json", "w") as outfile:
+        print(f"Generated ./data/10_low_lp1-{MODEL_NAME}.json")
         outfile.write(indexes_to_dataset(low_l1_10))
     with open(f"./data/5_low_lp1-{MODEL_NAME}.json", "w") as outfile:
+        print(f"Generated ./data/5_low_lp1-{MODEL_NAME}.json")
         outfile.write(indexes_to_dataset(low_l1_5))
     with open(f"./data/3_low_lp1-{MODEL_NAME}.json", "w") as outfile:
+        print(f"Generated ./data/3_low_lp1-{MODEL_NAME}.json")
         outfile.write(indexes_to_dataset(low_l1_3))
     with open(f"./data/1_low_lp1-{MODEL_NAME}.json", "w") as outfile:
+        print(f"Generated ./data/1_low_lp1-{MODEL_NAME}.json")
         outfile.write(indexes_to_dataset(low_l1_1))
 
 if (args.lp1_approx):
     with open(f"./data/33_low_lp1_approx-{MODEL_NAME}.json", "w") as outfile:
+        print(f"Generated ./data/33_low_lp1_approx-{MODEL_NAME}.json")
         outfile.write(indexes_to_dataset(low_proxy_33))
     with open(f"./data/33_mid_lp1_approx-{MODEL_NAME}.json", "w") as outfile:
+        print(f"Generated ./data/33_mid_lp1_approx-{MODEL_NAME}.json")
         outfile.write(indexes_to_dataset(mid_proxy_33))
     with open(f"./data/33_high_lp1_approx-{MODEL_NAME}.json", "w") as outfile:
+        print(f"Generated ./data/33_high_lp1_approx-{MODEL_NAME}.json")
         outfile.write(indexes_to_dataset(high_proxy_33))
     with open(f"./data/25_low_lp1_approx-{MODEL_NAME}.json", "w") as outfile:
+        print(f"Generated ./data/25_low_lp1_approx-{MODEL_NAME}.json")
         outfile.write(indexes_to_dataset(low_proxy_25))
     with open(f"./data/10_low_lp1_approx-{MODEL_NAME}.json", "w") as outfile:
+        print(f"Generated ./data/10_low_lp1_approx-{MODEL_NAME}.json")
         outfile.write(indexes_to_dataset(low_proxy_10))
     with open(f"./data/5_low_lp1_approx-{MODEL_NAME}.json", "w") as outfile:
+        print(f"Generated ./data/5_low_lp1_approx-{MODEL_NAME}.json")
         outfile.write(indexes_to_dataset(low_proxy_5))
     with open(f"./data/3_low_lp1_approx-{MODEL_NAME}.json", "w") as outfile:
+        print(f"Generated ./data/3_low_lp1_approx-{MODEL_NAME}.json")
         outfile.write(indexes_to_dataset(low_proxy_3))
     with open(f"./data/1_low_lp1_approx-{MODEL_NAME}.json", "w") as outfile:
+        print(f"Generated ./data/1_low_lp1_approx-{MODEL_NAME}.json")
         outfile.write(indexes_to_dataset(low_proxy_1))
 
 if (args.clust_rand):
     with open(f"./data/33_clust_rand-{MODEL_NAME}.json", "w") as outfile:
+        print(f"Generated ./data/33_clust_rand-{MODEL_NAME}.json")
         outfile.write(indexes_to_dataset(clust_rand_33))
     with open(f"./data/25_clust_rand-{MODEL_NAME}.json", "w") as outfile:
+        print(f"Generated ./data/25_clust_rand-{MODEL_NAME}.json")
         outfile.write(indexes_to_dataset(clust_rand_25))
     with open(f"./data/10_clust_rand-{MODEL_NAME}.json", "w") as outfile:
+        print(f"Generated ./data/10_clust_rand-{MODEL_NAME}.json")
         outfile.write(indexes_to_dataset(clust_rand_10))
     with open(f"./data/5_clust_rand-{MODEL_NAME}.json", "w") as outfile:
+        print(f"Generated ./data/5_clust_rand-{MODEL_NAME}.json")
         outfile.write(indexes_to_dataset(clust_rand_5))
     with open(f"./data/3_clust_rand-{MODEL_NAME}.json", "w") as outfile:
+        print(f"Generated ./data/3_clust_rand-{MODEL_NAME}.json")
         outfile.write(indexes_to_dataset(clust_rand_3))
     with open(f"./data/1_clust_rand-{MODEL_NAME}.json", "w") as outfile:
+        print(f"Generated ./data/1_clust_rand-{MODEL_NAME}.json")
         outfile.write(indexes_to_dataset(clust_rand_1))
 

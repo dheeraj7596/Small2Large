@@ -45,7 +45,7 @@ HEADER = [
     "index",
     "sample",
     "len_response",
-    "labels_1000",
+    "cluster_num",
     None,
     f"{MODEL_NAME}_P0",
     f"{MODEL_NAME}_P1",
@@ -79,7 +79,7 @@ with open(f"./l1-rankings/{MODEL_NAME}-l1_ranking.csv", "w") as f:
             i,
             sample,
             len(p["output"]),
-            cluster[i]["labels_300"],
+            cluster[i]["cluster_num"],
             None,
             full_pre[i],
             full_1[i],
@@ -89,3 +89,5 @@ with open(f"./l1-rankings/{MODEL_NAME}-l1_ranking.csv", "w") as f:
             l1,
         ]
         writer.writerow(row)
+
+print(f"Generated ./l1-rankings/{MODEL_NAME}-l1_ranking.csv!")
