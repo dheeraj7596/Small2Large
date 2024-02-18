@@ -5,11 +5,11 @@ This repository contains the code for the "[Smaller Language Models are capable 
 Once you have pulled the repo, there are four steps required to follow our method for data selection described in the paper.
 
 1. Cluster your dataset with all-MiniLM-L6-v2 model.
-2. Train the model which will select the data from your dataset.
-3. Generate selected subsets from the model trained in step above.
-4. Train final model on the selected subsets.
+2. Train the smaller model which will select the data from your dataset.
+3. Generate selected subsets from the perplexities of the smaller model trained in step above.
+4. Train bigger model on the selected subsets.
 
-*Below, we give an example where we use the Llama-2 7B model to select data from the Alpaca dataset for Llama-2 13B. If you would like to generate the exact subsets used in our paper from our training runs, go to step 3 below.*
+*Below, we give an example where we use a smaller Llama-2 7B model to select data from the Alpaca dataset for the bigger Llama-2 13B. If you would like to generate the exact subsets used in our paper from our training runs, go to step 3 below.*
 
 ### 1. Clustering
 ```
@@ -20,10 +20,10 @@ OPENBLAS_NUM_THREADS=1 CUDA_VISIBLE_DEVICES=... python clustering.py \\
 ```
 Generates `./clustering/{output_name}.pkl` which contains clustered dataset.
 
-### 2. Train selector model
+### 2. Train smaller model
 ```
 CUDA_VISIBLE_DEVICES=... torchrun --nproc_per_node=... --master_port=... dump_pplxs.py \
-    --model_name_or_path /path/to/llama2-7b/ \
+    --model_name_or_path /path/to/smaller/model/aka/llama2-7b/ \
     --data_path ./data/alpaca_data.json \
     --val_data_path ./data/alpaca_data.json \
     --bf16 True \
@@ -47,7 +47,7 @@ CUDA_VISIBLE_DEVICES=... torchrun --nproc_per_node=... --master_port=... dump_pp
 
 Generates `./dump-pplxs/epoch-pre.pkl`, `epoch-1.pkl`, `epoch-2.pkl`, and `epoch-3.pkl` which contains the perplexity values before training, after epoch 1, after epoch 2, and after epoch 3, respectively.
 
-### 3. Generate subsets
+### 3. Generate subsets from smaller model
 
 ```
 python process_pickle.py \
@@ -71,11 +71,11 @@ python subset.py \
     --lp1
 ```
 
-### 4. Train final model with subsets
+### 4. Train bigger model with subsets
 
 ```
 CUDA_VISIBLE_DEVICES=... torchrun --nproc_per_node=... --master_port=... train.py \
-    --model_name_or_path /path/to/llama2-13b/ \
+    --model_name_or_path /path/to/bigger/model/aka/llama2-13b/ \
     --data_path ./data/10_low_lp1-alpaca-llama2-7b.json \
     --bf16 True \
     --output_dir /path/to/output/dir/ \
