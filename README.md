@@ -47,29 +47,25 @@ CUDA_VISIBLE_DEVICES=... torchrun --nproc_per_node=... --master_port=... dump_pp
 
 Generates `./dump-pplxs/epoch-pre.pkl`, `epoch-1.pkl`, `epoch-2.pkl`, and `epoch-3.pkl` which contains the perplexity values before training, after epoch 1, after epoch 2, and after epoch 3, respectively.
 
+*We also provide our dumped perplexities in `dump-pplxs/` for all models talked about in the paper, if you would like to generate the exact subsets used in the paper.*
+
 ### 3. Generate subsets from smaller model
-
-```
-python process_pickle.py \
-    --dataset data/alpaca_data.json \
-    --epoch0 dump-pplxs/epoch-pre.pkl \
-    --epoch1 dump-pplxs/epoch-1.pkl \
-    --epoch2 dump-pplxs/epoch-2.pkl \
-    --epoch3 dump-pplxs/epoch-3.pkl \
-    --clustering clustering/alpaca-clustering.pkl \
-    --model_name alpaca-llama2-7b
-```
-
-Generates `./l1-rankings/{model_name}-l1_ranking.csv` which contains all perplexity and LP(1) values for data analysis.
-
-*We also provide this CSV for all models talked about in the paper, if you would like to generate the exact subsets used in the paper.*
 
 ```
 python subset.py \
     --dataset data/alpaca_data.json \
-    --l1_ranking_file l1-rankings/alpaca-llama2-7b-l1_ranking.csv \
-    --lp1
+    --clustering clustering/alpaca-clustering.pkl \
+    --epoch0 dump-pplxs/epoch-pre.pkl \
+    --epoch1 dump-pplxs/epoch-1.pkl \
+    --epoch2 dump-pplxs/epoch-2.pkl \
+    --epoch3 dump-pplxs/epoch-3.pkl \
+    --model_name alpaca-llama2-7b \
+    --lp1 \
 ```
+
+Generates multiple subsets of varying sizes such as `./data/10_low_lp1-{model_name}.json`, which contains 10% of the original dataset.
+
+Passing the `--lp1` argument will generate subsets using the LP(1) metric. Passing the `--lp1_approx` argument will generate subsets using the LP(1) approx metric. Passing the `--clust_rand` argument will generate the clust rand baseline used in the paper. You may also pass any combination of these arguments.
 
 ### 4. Train bigger model with subsets
 
