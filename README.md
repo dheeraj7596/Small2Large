@@ -25,7 +25,6 @@ Generates `./clustering/{output_name}.pkl` which contains clustered dataset.
 CUDA_VISIBLE_DEVICES=... torchrun --nproc_per_node=... --master_port=... dump_pplxs.py \
     --model_name_or_path /path/to/smaller/model/aka/llama2-7b/ \
     --data_path ./data/alpaca_data.json \
-    --val_data_path ./data/alpaca_data.json \
     --bf16 True \
     --output_dir /path/to/output/dir/ \
     --num_train_epochs 3 \
@@ -43,11 +42,10 @@ CUDA_VISIBLE_DEVICES=... torchrun --nproc_per_node=... --master_port=... dump_pp
     --seed 42 \
     --gradient_checkpointing True
 ```
-**Important:** `data_path` and `val_data_path` must be the same dataset!
 
 Generates `./dump-pplxs/epoch-pre.pkl`, `epoch-1.pkl`, `epoch-2.pkl`, and `epoch-3.pkl` which contains the perplexity values before training, after epoch 1, after epoch 2, and after epoch 3, respectively.
 
-*We also provide our dumped perplexities in `dump-pplxs/` for all models talked about in the paper, if you would like to generate the exact subsets used in the paper.*
+*We also provide pre-computed perplexities in `dump-pplxs/` for all models talked about in the paper, if you would like to generate the exact subsets used in the paper.*
 
 ### 3. Generate subsets from smaller model
 

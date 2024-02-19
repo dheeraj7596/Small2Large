@@ -52,7 +52,6 @@ class ModelArguments:
 @dataclass
 class DataArguments:
     data_path: str = field(metadata={"help": "Path to the training data."})
-    val_data_path: str = field(metadata={"help": "Path to the validation data."})
 
 
 @dataclass
@@ -181,10 +180,7 @@ class DataCollatorForSupervisedDataset(object):
 def make_supervised_data_module(tokenizer: transformers.PreTrainedTokenizer, data_args) -> Dict:
     """Make dataset and collator for supervised fine-tuning."""
     train_dataset = SupervisedDataset(tokenizer=tokenizer, data_path=data_args.data_path)
-    if data_args.val_data_path is None:
-        val_dataset = None
-    else:
-        val_dataset = SupervisedDataset(tokenizer=tokenizer, data_path=data_args.val_data_path)
+    val_dataset = SupervisedDataset(tokenizer=tokenizer, data_path=data_args.data_path)
     data_collator = DataCollatorForSupervisedDataset(tokenizer=tokenizer)
     return dict(train_dataset=train_dataset, eval_dataset=val_dataset, data_collator=data_collator)
 
