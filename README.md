@@ -1,5 +1,5 @@
-## Small2Large
-This repository contains the code for the "[Smaller Language Models are capable of selecting Instruction-Tuning Training Data for Larger Language Models](https://placehold.co/600x400)" paper.
+# Smaller Language Models are capable of selecting Instruction-Tuning Training Data for Larger Language Models
+This repository contains the <ins>official code</ins> for the "[Smaller Language Models are capable of selecting Instruction-Tuning Training Data for Larger Language Models](https://arxiv.org/abs/2402.10430)" paper.
 
 ## Usage
 Once you have pulled the repo, there are four steps required to follow our method for data selection described in the paper.
@@ -45,7 +45,7 @@ CUDA_VISIBLE_DEVICES=... torchrun --nproc_per_node=... --master_port=... dump_pp
 
 Generates `./dump-pplxs/epoch-pre.pkl`, `epoch-1.pkl`, `epoch-2.pkl`, and `epoch-3.pkl` which contains the perplexity values before training, after epoch 1, after epoch 2, and after epoch 3, respectively.
 
-*We also provide pre-computed perplexities in `dump-pplxs/` for all models talked about in the paper, if you would like to generate the exact subsets used in the paper.*
+**Note:** *We also provide pre-computed perplexities in `dump-pplxs/` for all models discussed in the paper, if you would like to generate the exact subsets used in the paper.*
 
 ### 3. Generate subsets from smaller model
 
@@ -91,4 +91,17 @@ CUDA_VISIBLE_DEVICES=... torchrun --nproc_per_node=... --master_port=... train.p
 
 Congratulations! You have now trained a Llama-2 13b on only 10% of the original Alpaca dataset which outperforms one trained on the entire dataset!
 
-For any questions, use the `-h` argument for any of the Python scripts or contact Alex Nguyen at atn021@ucsd.edu.
+For any questions, use the `-h` argument for any of the Python scripts or contact Alex Nguyen at atn021@ucsd.edu, Dheeraj Mekala at dmekala@ucsd.edu.
+
+## Citation
+If you find our work useful, please cite the following:
+```
+@misc{mekala2024smaller,
+      title={Smaller Language Models are capable of selecting Instruction-Tuning Training Data for Larger Language Models}, 
+      author={Dheeraj Mekala and Alex Nguyen and Jingbo Shang},
+      year={2024},
+      eprint={2402.10430},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+```
