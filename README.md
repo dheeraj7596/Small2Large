@@ -15,7 +15,7 @@ Once you have pulled the repo, there are four steps required to follow our metho
 
 ### 1. Clustering
 ```
-OPENBLAS_NUM_THREADS=1 CUDA_VISIBLE_DEVICES=... python clustering.py \\
+OPENBLAS_NUM_THREADS=1 CUDA_VISIBLE_DEVICES=... python clustering.py \
     --dataset data/alpaca_data.json \
     --num_clusters 1000 \
     --output_name "alpaca" \
