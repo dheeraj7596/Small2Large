@@ -9,7 +9,9 @@ Once you have pulled the repo, there are four steps required to follow our metho
 3. Generate selected subsets from the perplexities of the smaller model trained in step above.
 4. Train bigger model on the selected subsets.
 
-*Below, we give an example where we use a smaller Llama-2 7B model to select data from the Alpaca dataset for the bigger Llama-2 13B. If you would like to generate the exact subsets used in our paper from our training runs, go to step 3 below.*
+*Below, we give an example where we use a smaller Llama-2 7B model to select data from the Alpaca dataset for the bigger Llama-2 13B.*
+
+**Note:** *If you would like to use the exact subsets from our paper, we have included them under `./data/alpaca...` and `./data/dolly...`*.
 
 ### 1. Clustering
 ```
@@ -58,10 +60,11 @@ python subset.py \
     --epoch2 dump-pplxs/epoch-2.pkl \
     --epoch3 dump-pplxs/epoch-3.pkl \
     --model_name alpaca-llama2-7b \
+    --percentage 10 \
     --lp1 \
 ```
 
-Generates multiple subsets of varying sizes such as `./data/10_low_lp1-{model_name}.json`, which contains 10% of the original dataset.
+Generates a subset whose size is determined by `--percentage`. In the above case, we generate `./data/10_low_lp1-{model_name}.json`, which contains approximately 10% of the original dataset.
 
 Passing the `--lp1` argument will generate subsets using the LP(1) metric. Passing the `--lp1_approx` argument will generate subsets using the LP(1) approx metric. Passing the `--clust_rand` argument will generate the clust rand baseline used in the paper. You may also pass any combination of these arguments.
 

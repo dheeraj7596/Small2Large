@@ -34,6 +34,13 @@ required.add_argument(
 required.add_argument(
     "--epoch3", help="Pickle containing perplexities after epoch 3.", required=True
 )
+required.add_argument(
+    "--percentage",
+    help="Percentage (1-100) of original dataset to select.",
+    required=True,
+    type=int,
+    choices=range(1, 101),
+)
 optional.add_argument(
     "--lp1",
     help="If set, generates the subsets using the LP(1) metric.",
@@ -104,9 +111,7 @@ data = {
 df = pd.DataFrame.from_dict(data)
 # Calculate proxy
 df["LP1_Approx"] = (df["P0"] - df["P1"]) / (df["P0"])
-print(df)
-print()
-
+# print(df)
 
 def indexes_to_dataset(index_list):
     dataset = []
@@ -115,32 +120,9 @@ def indexes_to_dataset(index_list):
     return json.dumps(dataset, indent=4)
 
 
-low_l1_33 = []
-mid_l1_33 = []
-high_l1_33 = []
-
-low_l1_25 = []
-low_l1_10 = []
-low_l1_5 = []
-low_l1_3 = []
-low_l1_1 = []
-
-low_proxy_33 = []
-mid_proxy_33 = []
-high_proxy_33 = []
-
-low_proxy_25 = []
-low_proxy_10 = []
-low_proxy_5 = []
-low_proxy_3 = []
-low_proxy_1 = []
-
-clust_rand_33 = []
-clust_rand_25 = []
-clust_rand_10 = []
-clust_rand_5 = []
-clust_rand_3 = []
-clust_rand_1 = []
+low_l1 = []
+low_proxy = []
+clust_rand = []
 
 for cluster in range(df["cluster_num"].max() + 1):
     filter_clust = df[df["cluster_num"] == cluster]
@@ -149,114 +131,26 @@ for cluster in range(df["cluster_num"].max() + 1):
     indexes_L1 = sort_L1["index"].tolist()
     indexes_proxy = sort_proxy["index"].tolist()
 
-    low_l1_33.extend(np.array_split(indexes_L1, 3)[0])
-    mid_l1_33.extend(np.array_split(indexes_L1, 3)[1])
-    high_l1_33.extend(np.array_split(indexes_L1, 3)[2])
+    low_l1.extend(np.array_split(indexes_L1, round(100 / args.percentage))[0])
+    low_proxy.extend(np.array_split(indexes_proxy, round(100 / args.percentage))[0])
 
-    low_l1_25.extend(np.array_split(indexes_L1, 4)[0])
-    low_l1_10.extend(np.array_split(indexes_L1, 10)[0])
-    low_l1_5.extend(np.array_split(indexes_L1, 20)[0])
-    low_l1_3.extend(np.array_split(indexes_L1, 33)[0])
-    low_l1_1.extend(np.array_split(indexes_L1, 100)[0])
-
-    low_proxy_33.extend(np.array_split(indexes_proxy, 3)[0])
-    mid_proxy_33.extend(np.array_split(indexes_proxy, 3)[1])
-    high_proxy_33.extend(np.array_split(indexes_proxy, 3)[2])
-
-    low_proxy_25.extend(np.array_split(indexes_proxy, 4)[0])
-    low_proxy_10.extend(np.array_split(indexes_proxy, 10)[0])
-    low_proxy_5.extend(np.array_split(indexes_proxy, 20)[0])
-    low_proxy_3.extend(np.array_split(indexes_proxy, 33)[0])
-    low_proxy_1.extend(np.array_split(indexes_proxy, 100)[0])
-
-    clust_rand_33.extend(
-        random.sample(indexes_L1, len(np.array_split(indexes_L1, 3)[0]))
+    clust_rand.extend(
+        random.sample(
+            indexes_L1, len(np.array_split(indexes_L1, round(100 / args.percentage))[0])
+        )
     )
-    clust_rand_25.extend(
-        random.sample(indexes_L1, len(np.array_split(indexes_L1, 4)[0]))
-    )
-    clust_rand_10.extend(
-        random.sample(indexes_L1, len(np.array_split(indexes_L1, 10)[0]))
-    )
-    clust_rand_5.extend(
-        random.sample(indexes_L1, len(np.array_split(indexes_L1, 20)[0]))
-    )
-    clust_rand_3.extend(
-        random.sample(indexes_L1, len(np.array_split(indexes_L1, 33)[0]))
-    )
-    clust_rand_1.extend(
-        random.sample(indexes_L1, len(np.array_split(indexes_L1, 100)[0]))
-    )
-
 
 if args.lp1:
-    with open(f"./data/33_low_lp1-{MODEL_NAME}.json", "w") as outfile:
-        print(f"Generated ./data/33_low_lp1-{MODEL_NAME}.json")
-        outfile.write(indexes_to_dataset(low_l1_33))
-    with open(f"./data/33_mid_lp1-{MODEL_NAME}.json", "w") as outfile:
-        print(f"Generated ./data/33_mid_lp1-{MODEL_NAME}.json")
-        outfile.write(indexes_to_dataset(mid_l1_33))
-    with open(f"./data/33_high_lp1-{MODEL_NAME}.json", "w") as outfile:
-        print(f"Generated ./data/33_high_lp1-{MODEL_NAME}.json")
-        outfile.write(indexes_to_dataset(high_l1_33))
-    with open(f"./data/25_low_lp1-{MODEL_NAME}.json", "w") as outfile:
-        print(f"Generated ./data/25_low_lp1-{MODEL_NAME}.json")
-        outfile.write(indexes_to_dataset(low_l1_25))
-    with open(f"./data/10_low_lp1-{MODEL_NAME}.json", "w") as outfile:
-        print(f"Generated ./data/10_low_lp1-{MODEL_NAME}.json")
-        outfile.write(indexes_to_dataset(low_l1_10))
-    with open(f"./data/5_low_lp1-{MODEL_NAME}.json", "w") as outfile:
-        print(f"Generated ./data/5_low_lp1-{MODEL_NAME}.json")
-        outfile.write(indexes_to_dataset(low_l1_5))
-    with open(f"./data/3_low_lp1-{MODEL_NAME}.json", "w") as outfile:
-        print(f"Generated ./data/3_low_lp1-{MODEL_NAME}.json")
-        outfile.write(indexes_to_dataset(low_l1_3))
-    with open(f"./data/1_low_lp1-{MODEL_NAME}.json", "w") as outfile:
-        print(f"Generated ./data/1_low_lp1-{MODEL_NAME}.json")
-        outfile.write(indexes_to_dataset(low_l1_1))
+    with open(f"./data/{args.percentage}_low_lp1-{MODEL_NAME}.json", "w") as outfile:
+        print(f"Generated ./data/{args.percentage}_low_lp1-{MODEL_NAME}.json")
+        outfile.write(indexes_to_dataset(low_l1))
 
 if args.lp1_approx:
-    with open(f"./data/33_low_lp1_approx-{MODEL_NAME}.json", "w") as outfile:
-        print(f"Generated ./data/33_low_lp1_approx-{MODEL_NAME}.json")
-        outfile.write(indexes_to_dataset(low_proxy_33))
-    with open(f"./data/33_mid_lp1_approx-{MODEL_NAME}.json", "w") as outfile:
-        print(f"Generated ./data/33_mid_lp1_approx-{MODEL_NAME}.json")
-        outfile.write(indexes_to_dataset(mid_proxy_33))
-    with open(f"./data/33_high_lp1_approx-{MODEL_NAME}.json", "w") as outfile:
-        print(f"Generated ./data/33_high_lp1_approx-{MODEL_NAME}.json")
-        outfile.write(indexes_to_dataset(high_proxy_33))
-    with open(f"./data/25_low_lp1_approx-{MODEL_NAME}.json", "w") as outfile:
-        print(f"Generated ./data/25_low_lp1_approx-{MODEL_NAME}.json")
-        outfile.write(indexes_to_dataset(low_proxy_25))
-    with open(f"./data/10_low_lp1_approx-{MODEL_NAME}.json", "w") as outfile:
-        print(f"Generated ./data/10_low_lp1_approx-{MODEL_NAME}.json")
-        outfile.write(indexes_to_dataset(low_proxy_10))
-    with open(f"./data/5_low_lp1_approx-{MODEL_NAME}.json", "w") as outfile:
-        print(f"Generated ./data/5_low_lp1_approx-{MODEL_NAME}.json")
-        outfile.write(indexes_to_dataset(low_proxy_5))
-    with open(f"./data/3_low_lp1_approx-{MODEL_NAME}.json", "w") as outfile:
-        print(f"Generated ./data/3_low_lp1_approx-{MODEL_NAME}.json")
-        outfile.write(indexes_to_dataset(low_proxy_3))
-    with open(f"./data/1_low_lp1_approx-{MODEL_NAME}.json", "w") as outfile:
-        print(f"Generated ./data/1_low_lp1_approx-{MODEL_NAME}.json")
-        outfile.write(indexes_to_dataset(low_proxy_1))
+    with open(f"./data/{args.percentage}_low_lp1_approx-{MODEL_NAME}.json", "w") as outfile:
+        print(f"Generated ./data/{args.percentage}_low_lp1_approx-{MODEL_NAME}.json")
+        outfile.write(indexes_to_dataset(low_proxy))
 
 if args.clust_rand:
-    with open(f"./data/33_clust_rand-{MODEL_NAME}.json", "w") as outfile:
-        print(f"Generated ./data/33_clust_rand-{MODEL_NAME}.json")
-        outfile.write(indexes_to_dataset(clust_rand_33))
-    with open(f"./data/25_clust_rand-{MODEL_NAME}.json", "w") as outfile:
-        print(f"Generated ./data/25_clust_rand-{MODEL_NAME}.json")
-        outfile.write(indexes_to_dataset(clust_rand_25))
-    with open(f"./data/10_clust_rand-{MODEL_NAME}.json", "w") as outfile:
-        print(f"Generated ./data/10_clust_rand-{MODEL_NAME}.json")
-        outfile.write(indexes_to_dataset(clust_rand_10))
-    with open(f"./data/5_clust_rand-{MODEL_NAME}.json", "w") as outfile:
-        print(f"Generated ./data/5_clust_rand-{MODEL_NAME}.json")
-        outfile.write(indexes_to_dataset(clust_rand_5))
-    with open(f"./data/3_clust_rand-{MODEL_NAME}.json", "w") as outfile:
-        print(f"Generated ./data/3_clust_rand-{MODEL_NAME}.json")
-        outfile.write(indexes_to_dataset(clust_rand_3))
-    with open(f"./data/1_clust_rand-{MODEL_NAME}.json", "w") as outfile:
-        print(f"Generated ./data/1_clust_rand-{MODEL_NAME}.json")
-        outfile.write(indexes_to_dataset(clust_rand_1))
+    with open(f"./data/{args.percentage}_clust_rand-{MODEL_NAME}.json", "w") as outfile:
+        print(f"Generated ./data/{args.percentage}_clust_rand-{MODEL_NAME}.json")
+        outfile.write(indexes_to_dataset(clust_rand))
